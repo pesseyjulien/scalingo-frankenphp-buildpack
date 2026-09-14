@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ -f "$1/composer.json" ]; then
+    echo "FrankenPHP"
+    exit 0
+fi
+
+exit 1

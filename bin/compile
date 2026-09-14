@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+build_dir="$1"
+
+if [ -z "${FRANKENPHP_BINARY_URL:-}" ]; then
+    echo "FRANKENPHP_BINARY_URL must point to the static FrankenPHP artifact."
+    exit 1
+fi
+
+mkdir -p "$build_dir/bin"
+curl --fail --location --silent --show-error "$FRANKENPHP_BINARY_URL" --output "$build_dir/bin/frankenphp"
+
+if [ -n "${FRANKENPHP_BINARY_SHA256:-}" ]; then
+    echo "$FRANKENPHP_BINARY_SHA256  $build_dir/bin/frankenphp" | sha256sum --check --status
+fi
+
+chmod +x "$build_dir/bin/frankenphp"
+
+"$build_dir/bin/frankenphp" php-cli -r '
+if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 5) {
+    fwrite(STDERR, "FrankenPHP must embed PHP 8.5.\n");
+    exit(1);
+}
+
+if (phpversion("mongodb") !== "2.1.9") {
+    fwrite(STDERR, "FrankenPHP must embed ext-mongodb 2.1.9.\n");
+    exit(1);
+}
+'
