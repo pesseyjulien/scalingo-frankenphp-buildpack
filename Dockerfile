@@ -1,5 +1,4 @@
-ARG TARGETPLATFORM
-FROM --platform=$TARGETPLATFORM dunglas/frankenphp:static-builder-gnu AS builder
+FROM dunglas/frankenphp:static-builder-musl AS builder
 
 WORKDIR /go/src/app
 
