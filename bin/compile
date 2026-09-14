@@ -28,3 +28,13 @@ if (phpversion("mongodb") !== "2.1.9") {
     exit(1);
 }
 '
+
+if [ -f "$build_dir/composer.json" ]; then
+    curl --fail --location --silent --show-error https://getcomposer.org/composer-stable.phar --output "$build_dir/.composer.phar"
+    "$build_dir/bin/frankenphp" php-cli "$build_dir/.composer.phar" install \
+        --no-dev \
+        --no-interaction \
+        --no-progress \
+        --optimize-autoloader
+    rm "$build_dir/.composer.phar"
+fi

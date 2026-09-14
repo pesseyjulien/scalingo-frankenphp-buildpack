@@ -1,0 +1,43 @@
+name: Release FrankenPHP runtime
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the static runtime
+        run: docker build --file Dockerfile --tag frankenphp-runtime .
+      - name: Extract the runtime
+        run: |
+          docker create --name frankenphp-runtime-tmp frankenphp-runtime
+          docker cp frankenphp-runtime-tmp:/frankenphp-linux-x86_64 ./frankenphp-linux-x86_64
+          docker rm frankenphp-runtime-tmp
+          chmod +x ./frankenphp-linux-x86_64
+      - name: Verify PHP and MongoDB versions
+        run: |
+          ./frankenphp-linux-x86_64 php-cli -r '
+          if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 5) {
+              fwrite(STDERR, "Expected PHP 8.5.\\n");
+              exit(1);
+          }
+          if (phpversion("mongodb") !== "2.1.9") {
+              fwrite(STDERR, "Expected ext-mongodb 2.1.9.\\n");
+              exit(1);
+          }
+          '
+          sha256sum ./frankenphp-linux-x86_64 > frankenphp-linux-x86_64.sha256
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            frankenphp-linux-x86_64
+            frankenphp-linux-x86_64.sha256
