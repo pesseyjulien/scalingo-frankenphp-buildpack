@@ -17,6 +17,17 @@ fi
 
 chmod +x "$build_dir/bin/frankenphp"
 
+# Composer scripts invoke PHP directly; expose the FrankenPHP CLI under that name.
+cat > "$build_dir/bin/php" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec "$(dirname "$0")/frankenphp" php-cli "$@"
+EOF
+chmod +x "$build_dir/bin/php"
+export PATH="$build_dir/bin:$PATH"
+export PHP_BINARY="$build_dir/bin/php"
+
 "$build_dir/bin/frankenphp" php-cli -r '
 if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 5) {
     fwrite(STDERR, "FrankenPHP must embed PHP 8.5.\n");
