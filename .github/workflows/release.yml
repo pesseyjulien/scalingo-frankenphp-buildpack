@@ -18,7 +18,7 @@ jobs:
         run: docker build --file Dockerfile --tag frankenphp-runtime .
       - name: Extract the runtime
         run: |
-          docker create --name frankenphp-runtime-tmp frankenphp-runtime
+          docker create --name frankenphp-runtime-tmp frankenphp-runtime /frankenphp-linux-x86_64
           docker cp frankenphp-runtime-tmp:/frankenphp-linux-x86_64 ./frankenphp-linux-x86_64
           docker rm frankenphp-runtime-tmp
           chmod +x ./frankenphp-linux-x86_64
