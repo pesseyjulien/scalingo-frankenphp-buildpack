@@ -46,6 +46,12 @@ if [ -f "$build_dir/composer.json" ]; then
         --no-dev \
         --no-interaction \
         --no-progress \
+        --no-scripts \
         --optimize-autoloader
+    "$build_dir/bin/frankenphp" php-cli "$build_dir/.composer.phar" dump-autoload \
+        --no-interaction \
+        --no-scripts \
+        --classmap-authoritative
+    "$build_dir/bin/frankenphp" php-cli "$build_dir/.composer.phar" check-platform-reqs
     rm "$build_dir/.composer.phar"
 fi
