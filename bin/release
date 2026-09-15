@@ -2,6 +2,9 @@
 
 cat <<'EOF'
 ---
+config_vars:
+  FRANKENPHP_NUM_THREADS: "2"
+  FRANKENPHP_MAX_THREADS: "4"
 default_process_types:
   web: bin/frankenphp run --config Caddyfile
 EOF

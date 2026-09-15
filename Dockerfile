@@ -1,6 +1,13 @@
-FROM dunglas/frankenphp:static-builder-musl AS builder
+FROM --platform=linux/amd64 dunglas/frankenphp:static-builder-gnu AS builder
 
 WORKDIR /go/src/app
+
+# CentOS 7 does not ship re2c in its standard repositories. static-php-cli's
+# doctor requires it before the build starts, so enable EPEL explicitly.
+RUN yum install -y epel-release && \
+    yum install -y re2c && \
+    yum clean all && \
+    rm -rf /var/cache/yum
 
 RUN CLEAN=1 \
     PHP_VERSION=8.5 \

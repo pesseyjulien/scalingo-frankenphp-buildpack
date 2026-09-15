@@ -1,6 +1,6 @@
 # FrankenPHP buildpack for Scalingo
 
-This proof-of-concept buildpack downloads a prebuilt static FrankenPHP runtime.
+This proof-of-concept buildpack downloads a prebuilt glibc-based static FrankenPHP runtime.
 The application source remains in the Scalingo build directory. At build time,
 the buildpack refuses artifacts unless they report PHP 8.5 and exactly
 `ext-mongodb` 2.1.9.
@@ -33,6 +33,10 @@ scalingo --app <app> env-set \
 The `web` process is supplied by `bin/release`. It runs FrankenPHP with the
 project `Caddyfile`, which listens in HTTP on `$PORT`; Scalingo terminates TLS
 before forwarding requests to the application.
+
+The default thread settings are `FRANKENPHP_NUM_THREADS=2` and
+`FRANKENPHP_MAX_THREADS=4`. Override them in Scalingo after benchmarking the
+application and the selected container plan.
 
 When `composer.json` is present, the buildpack installs production dependencies
 with the downloaded FrankenPHP runtime.
