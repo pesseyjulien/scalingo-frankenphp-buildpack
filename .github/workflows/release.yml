@@ -12,10 +12,12 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-24.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Build the static runtime
-        run: docker build --file Dockerfile --tag frankenphp-runtime .
+        run: docker build --secret id=github-token,env=GITHUB_TOKEN --file Dockerfile --tag frankenphp-runtime .
       - name: Extract the runtime
         run: |
           docker create --name frankenphp-runtime-tmp frankenphp-runtime /frankenphp-linux-x86_64
