@@ -41,6 +41,12 @@ jobs:
               fwrite(STDERR, "Expected ext-filter.\\n");
               exit(1);
           }
+          foreach (["ctype", "iconv", "libxml", "openssl", "tokenizer"] as $extension) {
+              if (!extension_loaded($extension)) {
+                  fwrite(STDERR, "Expected ext-{$extension}.\\n");
+                  exit(1);
+              }
+          }
           '
           sha256sum ./frankenphp-linux-x86_64 > frankenphp-linux-x86_64.sha256
       - name: Publish release assets
