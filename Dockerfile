@@ -4,7 +4,7 @@ WORKDIR /go/src/app
 
 RUN CLEAN=1 \
     PHP_VERSION=8.5 \
-    PHP_EXTENSIONS="curl,dom,exif,fileinfo,imagick,intl,mbstring,mysqli,opcache,pdo_mysql,redis,simplexml,xml,xmlreader,xmlwriter,zip,mongodb" \
+    PHP_EXTENSIONS="curl,dom,exif,fileinfo,imagick,intl,mbstring,mysqli,opcache,pdo_mysql,redis,simplexml,xml,xmlreader,xmlwriter,zip,phar,mongodb" \
     SPC_OPT_DOWNLOAD_ARGS="--ignore-cache-sources=php-src --retry 5 -G mongodb:2.1.9:https://github.com/mongodb/mongo-php-driver.git" \
     ./build-static.sh
 
