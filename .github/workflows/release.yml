@@ -37,6 +37,10 @@ jobs:
               fwrite(STDERR, "Expected ext-phar.\\n");
               exit(1);
           }
+          if (!extension_loaded("filter")) {
+              fwrite(STDERR, "Expected ext-filter.\\n");
+              exit(1);
+          }
           '
           sha256sum ./frankenphp-linux-x86_64 > frankenphp-linux-x86_64.sha256
       - name: Publish release assets
