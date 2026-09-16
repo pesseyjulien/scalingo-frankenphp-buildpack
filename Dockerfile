@@ -16,7 +16,7 @@ RUN --mount=type=secret,id=github-token \
     GITHUB_TOKEN="$(if [ -r /run/secrets/github-token ]; then cat /run/secrets/github-token; fi)" \
     CLEAN=1 \
     PHP_VERSION=8.5 \
-    PHP_EXTENSIONS="ctype,curl,dom,exif,fileinfo,filter,iconv,imagick,intl,libxml,mbstring,mysqli,openssl,opcache,pdo_mysql,redis,session,simplexml,tokenizer,xml,xmlreader,xmlwriter,zip,phar,mongodb" \
+    PHP_EXTENSIONS="ctype,curl,dom,exif,fileinfo,filter,gd,iconv,imagick,intl,libxml,mbstring,mysqli,openssl,opcache,pdo_mysql,redis,session,simplexml,tokenizer,xml,xmlreader,xmlwriter,zip,phar,mongodb" \
     SPC_OPT_DOWNLOAD_ARGS="--ignore-cache-sources=php-src --retry 5 -G mongodb:2.1.9:https://github.com/mongodb/mongo-php-driver.git" \
     ./build-static.sh
 
