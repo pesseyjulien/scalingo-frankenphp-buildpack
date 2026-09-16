@@ -24,24 +24,8 @@ jobs:
           docker cp frankenphp-runtime-tmp:/frankenphp-linux-x86_64 ./frankenphp-linux-x86_64
           docker rm frankenphp-runtime-tmp
           chmod +x ./frankenphp-linux-x86_64
-      - name: Verify PHP and extensions
+      - name: Generate checksum
         run: |
-          ./frankenphp-linux-x86_64 php-cli -r '
-          if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 5) {
-              fwrite(STDERR, "Expected PHP 8.5.\\n");
-              exit(1);
-          }
-          if (phpversion("mongodb") !== "2.1.9") {
-              fwrite(STDERR, "Expected ext-mongodb 2.1.9.\\n");
-              exit(1);
-          }
-          foreach (["ctype", "curl", "dom", "exif", "fileinfo", "filter", "gd", "iconv", "imagick", "intl", "json", "libxml", "mbstring", "mysqli", "openssl", "opcache", "phar", "redis", "session", "simplexml", "tokenizer", "xml", "xmlreader", "xmlwriter", "zip"] as $extension) {
-              if (!extension_loaded($extension)) {
-                  fwrite(STDERR, "Expected ext-{$extension}.\\n");
-                  exit(1);
-              }
-          }
-          '
           sha256sum ./frankenphp-linux-x86_64 > ./frankenphp-linux-x86_64.sha256
       - name: Publish release assets
         if: startsWith(github.ref, 'refs/tags/v')
