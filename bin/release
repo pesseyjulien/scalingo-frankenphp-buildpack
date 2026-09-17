@@ -3,6 +3,7 @@
 cat <<'EOF'
 ---
 config_vars:
+  PHPRC: "/app/.frankenphp/php.ini"
   FRANKENPHP_NUM_THREADS: "2"
   FRANKENPHP_MAX_THREADS: "4"
 default_process_types:

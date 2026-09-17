@@ -31,6 +31,19 @@ xml xmlreader xmlwriter zip mongodb
 
 `json` est intégré à PHP 8.5 et ne nécessite pas d’être compilé séparément.
 
+La configuration de production d’OPcache est installée automatiquement :
+
+```ini
+opcache.enable = 1
+opcache.memory_consumption = 192
+opcache.max_accelerated_files = 20000
+opcache.interned_strings_buffer = 16
+opcache.validate_timestamps = 0
+opcache.save_comments = 1
+```
+
+Le fichier est installé dans `/app/.frankenphp/php.ini` et sélectionné au démarrage via `PHPRC`.
+
 ## Construire le runtime
 
 Prérequis : Docker avec BuildKit et un accès réseau.

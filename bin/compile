@@ -28,6 +28,16 @@ chmod +x "$build_dir/bin/php"
 export PATH="$build_dir/bin:$PATH"
 export PHP_BINARY="$build_dir/bin/php"
 
+mkdir -p "$build_dir/.frankenphp"
+cat > "$build_dir/.frankenphp/php.ini" <<'EOF'
+opcache.enable = 1
+opcache.memory_consumption = 192
+opcache.max_accelerated_files = 20000
+opcache.interned_strings_buffer = 16
+opcache.validate_timestamps = 0
+opcache.save_comments = 1
+EOF
+
 "$build_dir/bin/frankenphp" php-cli -r '
 if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 5) {
     fwrite(STDERR, "FrankenPHP must embed PHP 8.5.\n");
