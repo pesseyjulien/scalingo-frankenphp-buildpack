@@ -38,6 +38,58 @@ opcache.validate_timestamps = 0
 opcache.save_comments = 1
 EOF
 
+if [ -f "$build_dir/composer.json" ]; then
+    php_includes="$(COMPOSER_JSON_PATH="$build_dir/composer.json" "$build_dir/bin/frankenphp" php-cli -r '
+$composer_path = getenv("COMPOSER_JSON_PATH");
+$composer_contents = file_get_contents($composer_path);
+if ($composer_contents === false) {
+    fwrite(STDERR, "Unable to read composer.json: {$composer_path}\n");
+    exit(1);
+}
+
+$composer = json_decode($composer_contents, true);
+if (json_last_error() !== JSON_ERROR_NONE) {
+    fwrite(STDERR, "Invalid composer.json: " . json_last_error_msg() . "\n");
+    exit(1);
+}
+
+$includes = $composer["extra"]["paas"]["php-includes"] ?? [];
+
+if (!is_array($includes)) {
+    fwrite(STDERR, "extra.paas.php-includes must be an array.\n");
+    exit(1);
+}
+
+foreach ($includes as $include) {
+    if (!is_string($include) || $include === "") {
+        fwrite(STDERR, "Each extra.paas.php-includes entry must be a non-empty string.\n");
+        exit(1);
+    }
+
+    echo $include, PHP_EOL;
+}
+' )"
+
+    while IFS= read -r include_file; do
+        [ -n "$include_file" ] || continue
+
+        if [[ "$include_file" = /* ]]; then
+            include_path="$include_file"
+        else
+            include_path="$build_dir/$include_file"
+        fi
+
+        if [ ! -f "$include_path" ]; then
+            echo "PHP include file not found: $include_file" >&2
+            exit 1
+        fi
+
+        printf '\n; Project PHP override: %s\n' "$include_file" >> "$build_dir/.frankenphp/php.ini"
+        cat "$include_path" >> "$build_dir/.frankenphp/php.ini"
+        printf '\n' >> "$build_dir/.frankenphp/php.ini"
+    done <<< "$php_includes"
+fi
+
 "$build_dir/bin/frankenphp" php-cli -r '
 if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 5) {
     fwrite(STDERR, "FrankenPHP must embed PHP 8.5.\n");

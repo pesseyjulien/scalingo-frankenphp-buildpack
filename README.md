@@ -98,6 +98,22 @@ Si un `composer.json` est présent, le buildpack exécute :
 - génération de l’autoload optimisé et classmap authoritative ;
 - `composer check-platform-reqs`.
 
+Le projet peut fournir des fichiers de configuration PHP supplémentaires via `extra.paas.php-includes` :
+
+```json
+{
+  "extra": {
+    "paas": {
+      "php-includes": [
+        "./docker/config/php/php-prod.ini"
+      ]
+    }
+  }
+}
+```
+
+Ces fichiers sont ajoutés après la configuration par défaut du buildpack, dans l’ordre indiqué. En cas de directive répétée, la dernière valeur lue est donc prioritaire.
+
 Les valeurs par défaut du processus web sont :
 
 ```text
